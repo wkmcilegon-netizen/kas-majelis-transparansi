@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      activity_logs: {
+        Row: {
+          action: string
+          actor_name: string | null
+          created_at: string
+          detail: string | null
+          id: string
+        }
+        Insert: {
+          action: string
+          actor_name?: string | null
+          created_at?: string
+          detail?: string | null
+          id?: string
+        }
+        Update: {
+          action?: string
+          actor_name?: string | null
+          created_at?: string
+          detail?: string | null
+          id?: string
+        }
+        Relationships: []
+      }
       events: {
         Row: {
           created_at: string

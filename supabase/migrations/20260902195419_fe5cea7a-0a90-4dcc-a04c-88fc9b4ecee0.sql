@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.prune_activity_logs() FROM PUBLIC, anon, authenticated;

@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { BackButton, BrandHeader } from "@/components/Brand";
 import { Button } from "@/components/ui/button";
 import { formatDate, formatRupiah, type Transaction } from "@/lib/kas";
+import { logActivity } from "@/lib/activity";
 
 export const Route = createFileRoute("/_authenticated/admin/persetujuan")({
   head: () => ({
@@ -32,18 +33,23 @@ function Persetujuan() {
     },
   });
 
-  async function decide(id: string, status: "approved" | "rejected") {
+  async function decide(t: Transaction, status: "approved" | "rejected") {
     const { error } = await supabase
       .from("transactions")
       .update({ status, approved_at: status === "approved" ? new Date().toISOString() : null })
-      .eq("id", id);
+      .eq("id", t.id);
     if (error) {
       toast.error(error.message);
       return;
     }
+    await logActivity(
+      status === "approved" ? "Pengajuan disetujui" : "Pengajuan ditolak",
+      `${t.kind === "income" ? "Pemasukan" : "Pengeluaran"} ${(t.kind === "income" ? t.person_name : t.note) ?? "-"} • ${formatRupiah(Number(t.amount))}`,
+    );
     toast.success(status === "approved" ? "Pengajuan disetujui." : "Pengajuan ditolak.");
     qc.invalidateQueries();
   }
+
 
   const list = data ?? [];
 
@@ -69,10 +75,10 @@ function Persetujuan() {
                 </p>
                 <p className="mt-1 text-lg font-bold">{formatRupiah(Number(t.amount))}</p>
                 <div className="mt-3 flex gap-2">
-                  <Button size="sm" onClick={() => decide(t.id, "approved")}>
+                  <Button size="sm" onClick={() => decide(t, "approved")}>
                     Setujui
                   </Button>
-                  <Button size="sm" variant="outline" onClick={() => decide(t.id, "rejected")}>
+                  <Button size="sm" variant="outline" onClick={() => decide(t, "rejected")}>
                     Tolak
                   </Button>
                 </div>
