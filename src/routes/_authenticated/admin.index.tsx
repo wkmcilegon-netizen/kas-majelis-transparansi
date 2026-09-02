@@ -110,8 +110,8 @@ function AdminHome() {
         </div>
 
         <EventEditor event={event ?? null} />
-        <AddTransaction userId={session?.userId} />
         <TransactionAdminList transactions={(trx ?? []).filter((t) => t.status !== "pending")} />
+
       </main>
     </div>
   );
@@ -219,76 +219,7 @@ function EventEditor({ event }: { event: EventInfo | null }) {
   );
 }
 
-function AddTransaction({ userId }: { userId: string | undefined }) {
-  const qc = useQueryClient();
-  const [kind, setKind] = useState<"income" | "expense">("income");
-  const [target, setTarget] = useState<"acara" | "internal">("acara");
-  const [name, setName] = useState("");
-  const [note, setNote] = useState("");
-  const [amount, setAmount] = useState("");
 
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!userId) return;
-    const { error } = await supabase.from("transactions").insert({
-      kind,
-      target,
-      person_name: kind === "income" ? name.trim() : null,
-      note: kind === "expense" ? note.trim() : null,
-      amount: Number(amount),
-      status: "approved",
-      approved_at: new Date().toISOString(),
-      created_by: userId,
-    });
-    if (error) {
-      toast.error(error.message);
-      return;
-    }
-    toast.success("Transaksi ditambahkan.");
-    setName("");
-    setNote("");
-    setAmount("");
-    qc.invalidateQueries();
-  }
-
-  return (
-    <form onSubmit={submit} className="space-y-3 rounded-2xl border border-border bg-card p-4 shadow-soft">
-      <h2 className="text-sm font-bold uppercase tracking-wide">Input Pemasukan / Pengeluaran</h2>
-      <div className="grid grid-cols-2 gap-3">
-        <select
-          className="h-10 rounded-md border border-input bg-background px-3 text-sm"
-          value={kind}
-          onChange={(e) => setKind(e.target.value as "income" | "expense")}
-        >
-          <option value="income">Pemasukan</option>
-          <option value="expense">Pengeluaran</option>
-        </select>
-        <select
-          className="h-10 rounded-md border border-input bg-background px-3 text-sm"
-          value={target}
-          onChange={(e) => setTarget(e.target.value as "acara" | "internal")}
-        >
-          <option value="acara">Acara</option>
-          <option value="internal">Kas Internal</option>
-        </select>
-      </div>
-      {kind === "income" ? (
-        <Input placeholder="Nama penyumbang" value={name} onChange={(e) => setName(e.target.value)} required />
-      ) : (
-        <Input placeholder="Keterangan pembelian" value={note} onChange={(e) => setNote(e.target.value)} required />
-      )}
-      <Input
-        type="number"
-        min="1"
-        placeholder="Nominal (Rp)"
-        value={amount}
-        onChange={(e) => setAmount(e.target.value)}
-        required
-      />
-      <Button type="submit">Tambah</Button>
-    </form>
-  );
-}
 
 function TransactionAdminList({ transactions }: { transactions: Transaction[] }) {
   const qc = useQueryClient();
