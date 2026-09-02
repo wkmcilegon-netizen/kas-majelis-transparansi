@@ -110,8 +110,8 @@ function AdminHome() {
         </div>
 
         <EventEditor event={event ?? null} />
-        <AddTransaction userId={session?.userId} />
         <TransactionAdminList transactions={(trx ?? []).filter((t) => t.status !== "pending")} />
+
       </main>
     </div>
   );
