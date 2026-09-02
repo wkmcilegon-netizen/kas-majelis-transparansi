@@ -201,29 +201,84 @@ function FormPengajuan({ userId }: { userId: string | undefined }) {
   );
 }
 
+const BULAN = [
+  "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+  "Juli", "Agustus", "September", "Oktober", "November", "Desember",
+];
+
 function RiwayatList({ transactions }: { transactions: Transaction[] }) {
+  const now = new Date();
+  const [month, setMonth] = useState(now.getMonth());
+  const [year, setYear] = useState(now.getFullYear());
+
+  const years = Array.from(
+    new Set([now.getFullYear(), ...transactions.map((t) => new Date(t.created_at).getFullYear())]),
+  ).sort((a, b) => b - a);
+
+  const periode = transactions.filter((t) => {
+    const d = new Date(t.created_at);
+    return d.getMonth() === month && d.getFullYear() === year;
+  });
+  const pemasukan = periode.filter((t) => t.kind === "income");
+  const pengeluaran = periode.filter((t) => t.kind === "expense");
+
+  return (
+    <section className="space-y-3 rounded-2xl border border-border bg-card p-4 shadow-soft">
+      <h2 className="text-sm font-bold uppercase tracking-wide">Laporan per Periode</h2>
+      <div className="grid grid-cols-2 gap-3">
+        <select
+          aria-label="Bulan"
+          className="h-10 rounded-md border border-input bg-background px-3 text-sm"
+          value={month}
+          onChange={(e) => setMonth(Number(e.target.value))}
+        >
+          {BULAN.map((b, i) => (
+            <option key={b} value={i}>
+              {b}
+            </option>
+          ))}
+        </select>
+        <select
+          aria-label="Tahun"
+          className="h-10 rounded-md border border-input bg-background px-3 text-sm"
+          value={year}
+          onChange={(e) => setYear(Number(e.target.value))}
+        >
+          {years.map((y) => (
+            <option key={y} value={y}>
+              {y}
+            </option>
+          ))}
+        </select>
+      </div>
+      <TrxGroup title="Pemasukan" items={pemasukan} />
+      <TrxGroup title="Pengeluaran" items={pengeluaran} />
+    </section>
+  );
+}
+
+function TrxGroup({ title, items }: { title: string; items: Transaction[] }) {
   const label: Record<Transaction["status"], string> = {
     pending: "Menunggu",
     approved: "Disetujui",
     rejected: "Ditolak",
   };
   return (
-    <section className="rounded-2xl border border-border bg-card shadow-soft">
-      <h2 className="border-b border-border px-4 py-3 text-sm font-bold uppercase tracking-wide">
-        Laporan &amp; Riwayat
-      </h2>
-      {transactions.length === 0 ? (
-        <p className="px-4 py-6 text-center text-sm text-muted-foreground">Belum ada data.</p>
+    <div className="rounded-xl border border-border">
+      <h3 className="border-b border-border px-3 py-2 text-xs font-bold uppercase tracking-wide">
+        {title} <span className="text-muted-foreground">({items.length})</span>
+      </h3>
+      {items.length === 0 ? (
+        <p className="px-3 py-5 text-center text-sm text-muted-foreground">Belum ada data.</p>
       ) : (
-        <ul className="divide-y divide-border">
-          {transactions.map((t) => (
-            <li key={t.id} className="flex items-center justify-between gap-3 px-4 py-3">
+        <ul className="max-h-[26rem] divide-y divide-border overflow-y-auto">
+          {items.map((t) => (
+            <li key={t.id} className="flex h-[3.9rem] items-center justify-between gap-3 px-3">
               <div className="min-w-0">
                 <p className="truncate text-sm font-medium">
                   {(t.kind === "income" ? t.person_name : t.note) ?? "-"}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  {t.kind === "income" ? "Pemasukan" : "Pengeluaran"} •{" "}
                   {t.target === "acara" ? "Acara" : "Kas Internal"} • {label[t.status]} •{" "}
                   {formatDate(t.created_at)}
                 </p>
@@ -235,9 +290,51 @@ function RiwayatList({ transactions }: { transactions: Transaction[] }) {
           ))}
         </ul>
       )}
+    </div>
+  );
+}
+
+function InfoAdmin() {
+  const { data } = useQuery({
+    queryKey: ["activity-logs"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("activity_logs")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(100);
+      return (data ?? []) as ActivityLog[];
+    },
+  });
+  const logs = data ?? [];
+
+  return (
+    <section className="rounded-2xl border border-border bg-card shadow-soft">
+      <h2 className="border-b border-border px-4 py-3 text-sm font-bold uppercase tracking-wide">
+        Informasi Perubahan Admin
+      </h2>
+      {logs.length === 0 ? (
+        <p className="px-4 py-6 text-center text-sm text-muted-foreground">Belum ada informasi.</p>
+      ) : (
+        <ul className="max-h-[26rem] divide-y divide-border overflow-y-auto">
+          {logs.map((l) => (
+            <li key={l.id} className="flex h-[3.9rem] flex-col justify-center px-4">
+              <p className="truncate text-sm font-medium">{l.action}</p>
+              <p className="truncate text-xs text-muted-foreground">
+                {l.detail ? `${l.detail} • ` : ""}
+                {formatDate(l.created_at)}
+              </p>
+            </li>
+          ))}
+        </ul>
+      )}
+      <p className="border-t border-border px-4 py-2 text-[0.7rem] text-muted-foreground">
+        Informasi tersimpan maksimal 6 bulan, setelah itu terhapus otomatis.
+      </p>
     </section>
   );
 }
+
 
 function UbahPassword() {
   const [current, setCurrent] = useState("");
