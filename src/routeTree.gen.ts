@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedAnggotaRouteImport } from './routes/_authenticated/anggota'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedAdminAnggotaRouteImport } from './routes/_authenticated/admin.anggota'
 import { Route as AuthenticatedAdminPengaturanRouteImport } from './routes/_authenticated/admin.pengaturan'
@@ -30,6 +31,11 @@ const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAnggotaRoute = AuthenticatedAnggotaRouteImport.update({
+  id: '/anggota',
+  path: '/anggota',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   id: '/admin/',
@@ -58,6 +64,7 @@ const AuthenticatedAdminPersetujuanRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/anggota': typeof AuthenticatedAnggotaRoute
   '/admin/anggota': typeof AuthenticatedAdminAnggotaRoute
   '/admin/pengaturan': typeof AuthenticatedAdminPengaturanRoute
   '/admin/persetujuan': typeof AuthenticatedAdminPersetujuanRoute
@@ -66,6 +73,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/anggota': typeof AuthenticatedAnggotaRoute
   '/admin/anggota': typeof AuthenticatedAdminAnggotaRoute
   '/admin/pengaturan': typeof AuthenticatedAdminPengaturanRoute
   '/admin/persetujuan': typeof AuthenticatedAdminPersetujuanRoute
@@ -76,6 +84,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_authenticated/anggota': typeof AuthenticatedAnggotaRoute
   '/_authenticated/admin/anggota': typeof AuthenticatedAdminAnggotaRoute
   '/_authenticated/admin/pengaturan': typeof AuthenticatedAdminPengaturanRoute
   '/_authenticated/admin/persetujuan': typeof AuthenticatedAdminPersetujuanRoute
@@ -86,6 +95,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/anggota'
     | '/admin/anggota'
     | '/admin/pengaturan'
     | '/admin/persetujuan'
@@ -94,6 +104,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/anggota'
     | '/admin/anggota'
     | '/admin/pengaturan'
     | '/admin/persetujuan'
@@ -103,6 +114,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/_authenticated/anggota'
     | '/_authenticated/admin/anggota'
     | '/_authenticated/admin/pengaturan'
     | '/_authenticated/admin/persetujuan'
@@ -138,6 +150,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/anggota': {
+      id: '/_authenticated/anggota'
+      path: '/anggota'
+      fullPath: '/anggota'
+      preLoaderRoute: typeof AuthenticatedAnggotaRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin/': {
       id: '/_authenticated/admin/'
       path: '/admin'
@@ -170,6 +189,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAnggotaRoute: typeof AuthenticatedAnggotaRoute
   AuthenticatedAdminAnggotaRoute: typeof AuthenticatedAdminAnggotaRoute
   AuthenticatedAdminPengaturanRoute: typeof AuthenticatedAdminPengaturanRoute
   AuthenticatedAdminPersetujuanRoute: typeof AuthenticatedAdminPersetujuanRoute
@@ -177,6 +197,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAnggotaRoute: AuthenticatedAnggotaRoute,
   AuthenticatedAdminAnggotaRoute: AuthenticatedAdminAnggotaRoute,
   AuthenticatedAdminPengaturanRoute: AuthenticatedAdminPengaturanRoute,
   AuthenticatedAdminPersetujuanRoute: AuthenticatedAdminPersetujuanRoute,
