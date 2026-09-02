@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { logActivity } from "@/lib/activity";
 import { formatRupiah, isWithinWindow, type EventInfo, type Transaction } from "@/lib/kas";
 
 export const Route = createFileRoute("/_authenticated/admin/")({
@@ -162,6 +163,7 @@ function EventEditor({ event }: { event: EventInfo | null }) {
         ? await supabase.from("events").update(payload).eq("id", event.id)
         : await supabase.from("events").insert(payload);
       if (error) throw new Error(error.message);
+      await logActivity("Informasi acara diperbarui", payload.title);
       toast.success("Informasi acara tersimpan.");
       setFile(null);
       qc.invalidateQueries();
@@ -175,6 +177,7 @@ function EventEditor({ event }: { event: EventInfo | null }) {
   async function removeEvent() {
     if (!event) return;
     await supabase.from("events").delete().eq("id", event.id);
+    await logActivity("Informasi acara dihapus", event.title);
     toast.success("Informasi acara dihapus.");
     qc.invalidateQueries();
   }
@@ -247,13 +250,21 @@ function TransactionAdminList({ transactions }: { transactions: Transaction[] })
       toast.error(error.message);
       return;
     }
+    await logActivity(
+      "Transaksi diubah",
+      `${editLabel} • ${formatRupiah(Number(editAmount))}`,
+    );
     toast.success("Transaksi diperbarui.");
     setEditing(null);
     qc.invalidateQueries();
   }
 
-  async function remove(id: string) {
-    await supabase.from("transactions").delete().eq("id", id);
+  async function remove(t: Transaction) {
+    await supabase.from("transactions").delete().eq("id", t.id);
+    await logActivity(
+      "Transaksi dihapus",
+      `${(t.kind === "income" ? t.person_name : t.note) ?? "-"} • ${formatRupiah(Number(t.amount))}`,
+    );
     toast.success("Transaksi dihapus.");
     qc.invalidateQueries();
   }
@@ -301,7 +312,7 @@ function TransactionAdminList({ transactions }: { transactions: Transaction[] })
                     <Button size="icon" variant="ghost" onClick={() => startEdit(t)}>
                       <Pencil className="size-4" />
                     </Button>
-                    <Button size="icon" variant="ghost" onClick={() => remove(t.id)}>
+                    <Button size="icon" variant="ghost" onClick={() => remove(t)}>
                       <Trash2 className="size-4 text-destructive" />
                     </Button>
                   </div>

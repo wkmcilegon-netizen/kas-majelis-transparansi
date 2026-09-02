@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { BackButton, BrandHeader } from "@/components/Brand";
 import { Button } from "@/components/ui/button";
 import { formatDate, formatRupiah, type Transaction } from "@/lib/kas";
+import { logActivity } from "@/lib/activity";
 
 export const Route = createFileRoute("/_authenticated/admin/persetujuan")({
   head: () => ({
@@ -74,10 +75,10 @@ function Persetujuan() {
                 </p>
                 <p className="mt-1 text-lg font-bold">{formatRupiah(Number(t.amount))}</p>
                 <div className="mt-3 flex gap-2">
-                  <Button size="sm" onClick={() => decide(t.id, "approved")}>
+                  <Button size="sm" onClick={() => decide(t, "approved")}>
                     Setujui
                   </Button>
-                  <Button size="sm" variant="outline" onClick={() => decide(t.id, "rejected")}>
+                  <Button size="sm" variant="outline" onClick={() => decide(t, "rejected")}>
                     Tolak
                   </Button>
                 </div>
