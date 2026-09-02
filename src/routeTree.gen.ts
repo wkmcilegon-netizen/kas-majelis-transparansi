@@ -13,6 +13,9 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
+import { Route as AuthenticatedAdminAnggotaRouteImport } from './routes/_authenticated/admin.anggota'
+import { Route as AuthenticatedAdminPengaturanRouteImport } from './routes/_authenticated/admin.pengaturan'
+import { Route as AuthenticatedAdminPersetujuanRouteImport } from './routes/_authenticated/admin.persetujuan'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -33,15 +36,39 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   path: '/admin/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAdminAnggotaRoute =
+  AuthenticatedAdminAnggotaRouteImport.update({
+    id: '/admin/anggota',
+    path: '/admin/anggota',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminPengaturanRoute =
+  AuthenticatedAdminPengaturanRouteImport.update({
+    id: '/admin/pengaturan',
+    path: '/admin/pengaturan',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminPersetujuanRoute =
+  AuthenticatedAdminPersetujuanRouteImport.update({
+    id: '/admin/persetujuan',
+    path: '/admin/persetujuan',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/admin/anggota': typeof AuthenticatedAdminAnggotaRoute
+  '/admin/pengaturan': typeof AuthenticatedAdminPengaturanRoute
+  '/admin/persetujuan': typeof AuthenticatedAdminPersetujuanRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/admin/anggota': typeof AuthenticatedAdminAnggotaRoute
+  '/admin/pengaturan': typeof AuthenticatedAdminPengaturanRoute
+  '/admin/persetujuan': typeof AuthenticatedAdminPersetujuanRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRoutesById {
@@ -49,14 +76,37 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_authenticated/admin/anggota': typeof AuthenticatedAdminAnggotaRoute
+  '/_authenticated/admin/pengaturan': typeof AuthenticatedAdminPengaturanRoute
+  '/_authenticated/admin/persetujuan': typeof AuthenticatedAdminPersetujuanRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/admin/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/admin/anggota'
+    | '/admin/pengaturan'
+    | '/admin/persetujuan'
+    | '/admin/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/admin'
-  id: '__root__' | '/' | '/_authenticated' | '/auth' | '/_authenticated/admin/'
+  to:
+    | '/'
+    | '/auth'
+    | '/admin/anggota'
+    | '/admin/pengaturan'
+    | '/admin/persetujuan'
+    | '/admin'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/auth'
+    | '/_authenticated/admin/anggota'
+    | '/_authenticated/admin/pengaturan'
+    | '/_authenticated/admin/persetujuan'
+    | '/_authenticated/admin/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -95,14 +145,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/anggota': {
+      id: '/_authenticated/admin/anggota'
+      path: '/admin/anggota'
+      fullPath: '/admin/anggota'
+      preLoaderRoute: typeof AuthenticatedAdminAnggotaRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/pengaturan': {
+      id: '/_authenticated/admin/pengaturan'
+      path: '/admin/pengaturan'
+      fullPath: '/admin/pengaturan'
+      preLoaderRoute: typeof AuthenticatedAdminPengaturanRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/persetujuan': {
+      id: '/_authenticated/admin/persetujuan'
+      path: '/admin/persetujuan'
+      fullPath: '/admin/persetujuan'
+      preLoaderRoute: typeof AuthenticatedAdminPersetujuanRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminAnggotaRoute: typeof AuthenticatedAdminAnggotaRoute
+  AuthenticatedAdminPengaturanRoute: typeof AuthenticatedAdminPengaturanRoute
+  AuthenticatedAdminPersetujuanRoute: typeof AuthenticatedAdminPersetujuanRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminAnggotaRoute: AuthenticatedAdminAnggotaRoute,
+  AuthenticatedAdminPengaturanRoute: AuthenticatedAdminPengaturanRoute,
+  AuthenticatedAdminPersetujuanRoute: AuthenticatedAdminPersetujuanRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
 }
 
