@@ -4,12 +4,16 @@ import { ADMIN_USERNAME, DEFAULT_PASSWORD, usernameToEmail } from "./kas";
 
 const RECOVERY_CODE = "gh1gh415";
 
-async function assertAdmin(context: { supabase: { rpc: (fn: string, args: unknown) => Promise<{ data: unknown }> }; userId: string }) {
-  const { data } = await context.supabase.rpc("has_role", {
-    _user_id: context.userId,
-    _role: "admin",
-  });
-  if (data !== true) throw new Error("Akses ditolak: khusus admin.");
+async function assertAdmin(context: { userId: string }) {
+  // userId berasal dari bearer token yang sudah divalidasi middleware.
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { data } = await supabaseAdmin
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", context.userId)
+    .eq("role", "admin")
+    .maybeSingle();
+  if (!data) throw new Error("Akses ditolak: khusus admin.");
 }
 
 /** Membuat akun admin bawaan bila belum ada. Idempoten. */
