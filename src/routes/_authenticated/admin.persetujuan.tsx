@@ -32,18 +32,23 @@ function Persetujuan() {
     },
   });
 
-  async function decide(id: string, status: "approved" | "rejected") {
+  async function decide(t: Transaction, status: "approved" | "rejected") {
     const { error } = await supabase
       .from("transactions")
       .update({ status, approved_at: status === "approved" ? new Date().toISOString() : null })
-      .eq("id", id);
+      .eq("id", t.id);
     if (error) {
       toast.error(error.message);
       return;
     }
+    await logActivity(
+      status === "approved" ? "Pengajuan disetujui" : "Pengajuan ditolak",
+      `${t.kind === "income" ? "Pemasukan" : "Pengeluaran"} ${(t.kind === "income" ? t.person_name : t.note) ?? "-"} • ${formatRupiah(Number(t.amount))}`,
+    );
     toast.success(status === "approved" ? "Pengajuan disetujui." : "Pengajuan ditolak.");
     qc.invalidateQueries();
   }
+
 
   const list = data ?? [];
 
