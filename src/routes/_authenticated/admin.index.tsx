@@ -219,7 +219,7 @@ function EventEditor({ event }: { event: EventInfo | null }) {
   );
 }
 
-function AddTransaction({ userId }: { userId?: string }) {
+function AddTransaction({ userId }: { userId: string | undefined }) {
   const qc = useQueryClient();
   const [kind, setKind] = useState<"income" | "expense">("income");
   const [target, setTarget] = useState<"acara" | "internal">("acara");

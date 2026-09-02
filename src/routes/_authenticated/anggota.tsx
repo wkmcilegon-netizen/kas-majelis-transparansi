@@ -90,7 +90,7 @@ function HalamanAnggota() {
   );
 }
 
-function FormPemasukan({ userId }: { userId?: string }) {
+function FormPemasukan({ userId }: { userId: string | undefined }) {
   const qc = useQueryClient();
   const [name, setName] = useState("");
   const [amount, setAmount] = useState("");
@@ -152,7 +152,7 @@ function FormPemasukan({ userId }: { userId?: string }) {
   );
 }
 
-function FormPengajuan({ userId }: { userId?: string }) {
+function FormPengajuan({ userId }: { userId: string | undefined }) {
   const qc = useQueryClient();
   const [note, setNote] = useState("");
   const [amount, setAmount] = useState("");
@@ -251,9 +251,8 @@ function UbahPassword() {
     }
     const { error } = await supabase.auth.updateUser({
       password: next,
-      // @ts-expect-error current_password is supported by Lovable Cloud auth
       current_password: current,
-    });
+    } as Parameters<typeof supabase.auth.updateUser>[0]);
     if (error) {
       toast.error(error.message);
       return;
