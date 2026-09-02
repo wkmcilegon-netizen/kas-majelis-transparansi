@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { formatDate, formatRupiah, isWithinWindow, type Transaction } from "@/lib/kas";
+import type { ActivityLog } from "@/lib/activity";
 
 export const Route = createFileRoute("/_authenticated/anggota")({
   head: () => ({
@@ -84,6 +85,7 @@ function HalamanAnggota() {
         <FormPemasukan userId={session?.userId} />
         <FormPengajuan userId={session?.userId} />
         <RiwayatList transactions={trx ?? []} />
+        <InfoAdmin />
         <UbahPassword />
       </main>
     </div>
