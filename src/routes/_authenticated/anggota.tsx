@@ -8,6 +8,7 @@ import { useSessionInfo } from "@/hooks/useSession";
 import { BackButton, BrandHeader } from "@/components/Brand";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/PasswordInput";
 import { Label } from "@/components/ui/label";
 import { formatDate, formatRupiah, isWithinWindow, type Transaction } from "@/lib/kas";
 import type { ActivityLog } from "@/lib/activity";
@@ -366,11 +367,11 @@ function UbahPassword() {
       <h2 className="text-sm font-bold uppercase tracking-wide">Pengaturan Password</h2>
       <div className="space-y-1.5">
         <Label htmlFor="a-cur">Password Saat Ini</Label>
-        <Input id="a-cur" type="password" value={current} onChange={(e) => setCurrent(e.target.value)} required />
+        <PasswordInput id="a-cur" value={current} onChange={(e) => setCurrent(e.target.value)} required />
       </div>
       <div className="space-y-1.5">
         <Label htmlFor="a-new">Password Baru</Label>
-        <Input id="a-new" type="password" value={next} onChange={(e) => setNext(e.target.value)} required />
+        <PasswordInput id="a-new" value={next} onChange={(e) => setNext(e.target.value)} required />
       </div>
       <Button type="submit">Simpan Password</Button>
     </form>

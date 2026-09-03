@@ -9,6 +9,7 @@ import { ADMIN_USERNAME } from "@/lib/kas";
 import { BackButton, BrandHeader } from "@/components/Brand";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/PasswordInput";
 import { Label } from "@/components/ui/label";
 
 export const Route = createFileRoute("/_authenticated/admin/anggota")({
@@ -78,7 +79,7 @@ function KelolaAnggota() {
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="m-pass">Password</Label>
-            <Input id="m-pass" value={password} onChange={(e) => setPassword(e.target.value)} required />
+            <PasswordInput id="m-pass" value={password} onChange={(e) => setPassword(e.target.value)} required />
           </div>
           <Button type="submit">Buat Akun</Button>
         </form>

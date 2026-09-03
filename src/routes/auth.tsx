@@ -7,6 +7,7 @@ import { usernameToEmail } from "@/lib/kas";
 import { BackButton, Logo } from "@/components/Brand";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/PasswordInput";
 import { Label } from "@/components/ui/label";
 
 export const Route = createFileRoute("/auth")({
@@ -75,7 +76,7 @@ function AuthPage() {
         {showRecover ? (
           <form onSubmit={handleRecover} className="space-y-3">
             <Label htmlFor="code">Kode pemulihan admin</Label>
-            <Input id="code" value={code} onChange={(e) => setCode(e.target.value)} placeholder="Kode" />
+            <PasswordInput id="code" value={code} onChange={(e) => setCode(e.target.value)} placeholder="Kode" />
             <Button type="submit" className="w-full">
               Pulihkan Password Admin
             </Button>
@@ -97,9 +98,8 @@ function AuthPage() {
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="password">Password</Label>
-              <Input
+              <PasswordInput
                 id="password"
-                type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required

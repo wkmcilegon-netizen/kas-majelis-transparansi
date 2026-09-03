@@ -6,6 +6,7 @@ import { ADMIN_USERNAME } from "@/lib/kas";
 import { BackButton, BrandHeader } from "@/components/Brand";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/PasswordInput";
 import { Label } from "@/components/ui/label";
 
 export const Route = createFileRoute("/_authenticated/admin/pengaturan")({
@@ -60,11 +61,11 @@ function PengaturanAdmin() {
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="cur">Password Saat Ini</Label>
-            <Input id="cur" type="password" value={current} onChange={(e) => setCurrent(e.target.value)} required />
+            <PasswordInput id="cur" value={current} onChange={(e) => setCurrent(e.target.value)} required />
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="new">Password Baru</Label>
-            <Input id="new" type="password" value={next} onChange={(e) => setNext(e.target.value)} required />
+            <PasswordInput id="new" value={next} onChange={(e) => setNext(e.target.value)} required />
           </div>
           <Button type="submit" disabled={loading}>
             {loading ? "Menyimpan…" : "Simpan Password"}
