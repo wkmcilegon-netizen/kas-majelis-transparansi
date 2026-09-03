@@ -29,8 +29,8 @@ function usePublicData() {
   return useQuery({
     queryKey: ["public-kas"],
     queryFn: async () => {
-      const [{ data: ev }, { data: trx }] = await Promise.all([
-        supabase.from("events").select("*").order("created_at", { ascending: false }).limit(1),
+      const [event, { data: trx }] = await Promise.all([
+        fetchLatestEvent(supabase),
         supabase
           .from("transactions")
           .select("*")
@@ -38,13 +38,6 @@ function usePublicData() {
           .eq("target", "acara")
           .order("created_at", { ascending: false }),
       ]);
-      const event = (ev?.[0] ?? null) as EventInfo | null;
-      if (event?.pamphlet_url) {
-        const { data: signed } = await supabase.storage
-          .from("pamflet")
-          .createSignedUrl(event.pamphlet_url, 60 * 60 * 24 * 7);
-        event.pamphlet_url = signed?.signedUrl ?? null;
-      }
       return {
         event,
         transactions: ((trx ?? []) as Transaction[]).filter((t) => isWithinWindow(t.created_at)),
@@ -52,6 +45,7 @@ function usePublicData() {
     },
   });
 }
+
 
 function Beranda() {
   const { data, isLoading } = usePublicData();

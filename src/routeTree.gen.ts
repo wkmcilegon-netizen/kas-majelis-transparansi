@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AcaraRouteImport } from './routes/acara'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedAnggotaRouteImport } from './routes/_authenticated/anggota'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
@@ -25,6 +26,11 @@ const IndexRoute = IndexRouteImport.update({
 } as any)
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AcaraRoute = AcaraRouteImport.update({
+  id: '/acara',
+  path: '/acara',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -63,6 +69,7 @@ const AuthenticatedAdminPersetujuanRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/acara': typeof AcaraRoute
   '/auth': typeof AuthRoute
   '/anggota': typeof AuthenticatedAnggotaRoute
   '/admin/anggota': typeof AuthenticatedAdminAnggotaRoute
@@ -72,6 +79,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/acara': typeof AcaraRoute
   '/auth': typeof AuthRoute
   '/anggota': typeof AuthenticatedAnggotaRoute
   '/admin/anggota': typeof AuthenticatedAdminAnggotaRoute
@@ -83,6 +91,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/acara': typeof AcaraRoute
   '/auth': typeof AuthRoute
   '/_authenticated/anggota': typeof AuthenticatedAnggotaRoute
   '/_authenticated/admin/anggota': typeof AuthenticatedAdminAnggotaRoute
@@ -94,6 +103,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/acara'
     | '/auth'
     | '/anggota'
     | '/admin/anggota'
@@ -103,6 +113,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/acara'
     | '/auth'
     | '/anggota'
     | '/admin/anggota'
@@ -113,6 +124,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/acara'
     | '/auth'
     | '/_authenticated/anggota'
     | '/_authenticated/admin/anggota'
@@ -124,6 +136,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AcaraRoute: typeof AcaraRoute
   AuthRoute: typeof AuthRoute
 }
 
@@ -141,6 +154,13 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: '/'
       preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/acara': {
+      id: '/acara'
+      path: '/acara'
+      fullPath: '/acara'
+      preLoaderRoute: typeof AcaraRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -210,6 +230,7 @@ const AuthenticatedRouteRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AcaraRoute: AcaraRoute,
   AuthRoute: AuthRoute,
 }
 export const routeTree = rootRouteImport
