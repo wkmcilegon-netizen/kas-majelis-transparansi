@@ -159,13 +159,14 @@ function FormPengajuan({ userId }: { userId: string | undefined }) {
   const qc = useQueryClient();
   const [note, setNote] = useState("");
   const [amount, setAmount] = useState("");
+  const [target, setTarget] = useState<"acara" | "internal">("acara");
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     if (!userId) return;
     const { error } = await supabase.from("transactions").insert({
       kind: "expense",
-      target: "acara",
+      target,
       note: note.trim(),
       amount: Number(amount),
       status: "pending",
@@ -199,10 +200,26 @@ function FormPengajuan({ userId }: { userId: string | undefined }) {
           required
         />
       </div>
+      <div className="space-y-1.5">
+        <Label htmlFor="ex-target">Dikeluarkan dari</Label>
+        <select
+          id="ex-target"
+          className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+          value={target}
+          onChange={(e) => setTarget(e.target.value as "acara" | "internal")}
+        >
+          <option value="acara">Kas Acara</option>
+          <option value="internal">Kas Internal</option>
+        </select>
+        <p className="text-xs text-muted-foreground">
+          Saldo kas yang dipilih akan berkurang setelah admin menyetujui.
+        </p>
+      </div>
       <Button type="submit">Ajukan</Button>
     </form>
   );
 }
+
 
 const BULAN = [
   "Januari", "Februari", "Maret", "April", "Mei", "Juni",
