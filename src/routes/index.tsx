@@ -63,7 +63,7 @@ function Beranda() {
       {event ? (
         <section className="sticky top-0 z-20 border-b border-border bg-card/95 backdrop-blur shadow-soft">
           <div className="mx-auto max-w-3xl px-4 py-4">
-            <div className="flex gap-3">
+            <Link to="/acara" className="flex gap-3 text-left transition hover:opacity-90">
               {event.pamphlet_url ? (
                 <img
                   src={event.pamphlet_url}
@@ -81,13 +81,17 @@ function Beranda() {
                   <p className="text-xs text-muted-foreground">{formatDate(event.event_date)}</p>
                 ) : null}
                 {event.description ? (
-                  <p className="mt-1 line-clamp-4 text-sm text-muted-foreground">{event.description}</p>
+                  <p className="mt-1 line-clamp-3 text-sm text-muted-foreground">{event.description}</p>
                 ) : null}
+                <span className="mt-1 inline-block text-xs font-semibold text-primary underline">
+                  Lihat pamflet &amp; detail lengkap
+                </span>
               </div>
-            </div>
+            </Link>
           </div>
         </section>
       ) : null}
+
 
       <main className="mx-auto max-w-3xl space-y-6 px-4 py-6">
         <section className="rounded-2xl bg-gradient-navy p-[1.5px] shadow-gold">
