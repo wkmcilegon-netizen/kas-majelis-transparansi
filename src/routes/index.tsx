@@ -4,7 +4,13 @@ import { LogIn, TrendingDown, TrendingUp, Wallet } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { BrandHeader } from "@/components/Brand";
 import { Button } from "@/components/ui/button";
-import { formatDate, formatRupiah, isWithinWindow, type EventInfo, type Transaction } from "@/lib/kas";
+import {
+  fetchLatestEvent,
+  formatDate,
+  formatRupiah,
+  isWithinWindow,
+  type Transaction,
+} from "@/lib/kas";
 
 export const Route = createFileRoute("/")({
   head: () => ({
