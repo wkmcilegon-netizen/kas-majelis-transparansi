@@ -55,3 +55,33 @@ export type EventInfo = {
   event_date: string | null;
   created_at: string;
 };
+
+/** Informasi acara tampil sampai 2 bulan setelah acara berlangsung. */
+export const EVENT_WINDOW_DAYS = 60;
+
+export function isEventVisible(event: EventInfo) {
+  const ref = new Date(event.event_date ?? event.created_at).getTime();
+  return Date.now() - ref < EVENT_WINDOW_DAYS * 24 * 60 * 60 * 1000;
+}
+
+/** Ambil acara terbaru yang masih dalam masa tayang, lengkap dengan URL pamflet. */
+export async function fetchLatestEvent(client: {
+  from: (t: "events") => any;
+  storage: { from: (b: string) => any };
+}): Promise<EventInfo | null> {
+  const { data } = await client
+    .from("events")
+    .select("*")
+    .order("created_at", { ascending: false })
+    .limit(1);
+  const event = (data?.[0] ?? null) as EventInfo | null;
+  if (!event || !isEventVisible(event)) return null;
+  if (event.pamphlet_url) {
+    const { data: signed } = await client.storage
+      .from("pamflet")
+      .createSignedUrl(event.pamphlet_url, 60 * 60 * 24 * 7);
+    event.pamphlet_url = signed?.signedUrl ?? null;
+  }
+  return event;
+}
+
