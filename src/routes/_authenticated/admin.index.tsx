@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { purgeUnusedData } from "@/lib/admin.functions";
 import { logActivity } from "@/lib/activity";
 import { formatRupiah, isWithinWindow, type EventInfo, type Transaction } from "@/lib/kas";
 
@@ -33,6 +34,11 @@ function AdminHome() {
   useEffect(() => {
     if (!loadingSession && session && !session.isAdmin) navigate({ to: "/anggota" });
   }, [loadingSession, session, navigate]);
+
+  useEffect(() => {
+    if (loadingSession || !session?.isAdmin) return;
+    void purgeUnusedData().catch(() => undefined);
+  }, [loadingSession, session]);
 
   const { data: trx } = useQuery({
     queryKey: ["admin-transactions"],
@@ -164,6 +170,7 @@ function EventEditor({ event }: { event: EventInfo | null }) {
         : await supabase.from("events").insert(payload);
       if (error) throw new Error(error.message);
       await logActivity("Informasi acara diperbarui", payload.title);
+      await purgeUnusedData().catch(() => undefined);
       toast.success("Informasi acara tersimpan.");
       setFile(null);
       qc.invalidateQueries();
@@ -178,6 +185,7 @@ function EventEditor({ event }: { event: EventInfo | null }) {
     if (!event) return;
     await supabase.from("events").delete().eq("id", event.id);
     await logActivity("Informasi acara dihapus", event.title);
+    await purgeUnusedData().catch(() => undefined);
     toast.success("Informasi acara dihapus.");
     qc.invalidateQueries();
   }
