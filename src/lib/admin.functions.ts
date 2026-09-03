@@ -136,3 +136,28 @@ export const deleteMember = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
+/**
+ * Membersihkan data yang sudah tidak terpakai secara permanen:
+ * - file pamflet yatim di storage (tidak lagi dirujuk acara mana pun)
+ * - pengajuan yang ditolak
+ * - catatan informasi/aktivitas lebih dari 6 bulan
+ */
+export const purgeUnusedData = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin(context as never);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const { data: events } = await supabaseAdmin.from("events").select("pamphlet_url");
+    const used = new Set((events ?? []).map((e) => e.pamphlet_url).filter(Boolean) as string[]);
+    const { data: files } = await supabaseAdmin.storage.from("pamflet").list("", { limit: 1000 });
+    const orphans = (files ?? []).map((f) => f.name).filter((n) => !used.has(n));
+    if (orphans.length) await supabaseAdmin.storage.from("pamflet").remove(orphans);
+
+    await supabaseAdmin.from("transactions").delete().eq("status", "rejected");
+    const cutoff = new Date(Date.now() - 182 * 24 * 60 * 60 * 1000).toISOString();
+    await supabaseAdmin.from("activity_logs").delete().lt("created_at", cutoff);
+
+    return { ok: true, removedFiles: orphans.length };
+  });
