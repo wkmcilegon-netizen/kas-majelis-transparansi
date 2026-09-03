@@ -4,7 +4,13 @@ import { LogIn, TrendingDown, TrendingUp, Wallet } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { BrandHeader } from "@/components/Brand";
 import { Button } from "@/components/ui/button";
-import { formatDate, formatRupiah, isWithinWindow, type EventInfo, type Transaction } from "@/lib/kas";
+import {
+  fetchLatestEvent,
+  formatDate,
+  formatRupiah,
+  isWithinWindow,
+  type Transaction,
+} from "@/lib/kas";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -29,8 +35,8 @@ function usePublicData() {
   return useQuery({
     queryKey: ["public-kas"],
     queryFn: async () => {
-      const [{ data: ev }, { data: trx }] = await Promise.all([
-        supabase.from("events").select("*").order("created_at", { ascending: false }).limit(1),
+      const [event, { data: trx }] = await Promise.all([
+        fetchLatestEvent(supabase),
         supabase
           .from("transactions")
           .select("*")
@@ -38,13 +44,6 @@ function usePublicData() {
           .eq("target", "acara")
           .order("created_at", { ascending: false }),
       ]);
-      const event = (ev?.[0] ?? null) as EventInfo | null;
-      if (event?.pamphlet_url) {
-        const { data: signed } = await supabase.storage
-          .from("pamflet")
-          .createSignedUrl(event.pamphlet_url, 60 * 60 * 24 * 7);
-        event.pamphlet_url = signed?.signedUrl ?? null;
-      }
       return {
         event,
         transactions: ((trx ?? []) as Transaction[]).filter((t) => isWithinWindow(t.created_at)),
@@ -52,6 +51,7 @@ function usePublicData() {
     },
   });
 }
+
 
 function Beranda() {
   const { data, isLoading } = usePublicData();
@@ -69,7 +69,7 @@ function Beranda() {
       {event ? (
         <section className="sticky top-0 z-20 border-b border-border bg-card/95 backdrop-blur shadow-soft">
           <div className="mx-auto max-w-3xl px-4 py-4">
-            <div className="flex gap-3">
+            <Link to="/acara" className="flex gap-3 text-left transition hover:opacity-90">
               {event.pamphlet_url ? (
                 <img
                   src={event.pamphlet_url}
@@ -87,13 +87,17 @@ function Beranda() {
                   <p className="text-xs text-muted-foreground">{formatDate(event.event_date)}</p>
                 ) : null}
                 {event.description ? (
-                  <p className="mt-1 line-clamp-4 text-sm text-muted-foreground">{event.description}</p>
+                  <p className="mt-1 line-clamp-3 text-sm text-muted-foreground">{event.description}</p>
                 ) : null}
+                <span className="mt-1 inline-block text-xs font-semibold text-primary underline">
+                  Lihat pamflet &amp; detail lengkap
+                </span>
               </div>
-            </div>
+            </Link>
           </div>
         </section>
       ) : null}
+
 
       <main className="mx-auto max-w-3xl space-y-6 px-4 py-6">
         <section className="rounded-2xl bg-gradient-navy p-[1.5px] shadow-gold">
