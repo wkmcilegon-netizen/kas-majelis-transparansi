@@ -64,10 +64,9 @@ export function isEventVisible(event: EventInfo) {
   return Date.now() - ref < EVENT_WINDOW_DAYS * 24 * 60 * 60 * 1000;
 }
 
-/** Ambil acara terbaru yang masih dalam masa tayang, lengkap dengan URL pamflet. */
+/** Ambil acara terbaru yang masih dalam masa tayang, lengkap dengan URL pamflet publik. */
 export async function fetchLatestEvent(client: {
   from: (t: "events") => any;
-  storage: { from: (b: string) => any };
 }): Promise<EventInfo | null> {
   const { data } = await client
     .from("events")
@@ -77,10 +76,7 @@ export async function fetchLatestEvent(client: {
   const event = (data?.[0] ?? null) as EventInfo | null;
   if (!event || !isEventVisible(event)) return null;
   if (event.pamphlet_url) {
-    const { data: signed } = await client.storage
-      .from("pamflet")
-      .createSignedUrl(event.pamphlet_url, 60 * 60 * 24 * 7);
-    event.pamphlet_url = signed?.signedUrl ?? null;
+    event.pamphlet_url = `/api/public/pamflet/${encodeURIComponent(event.pamphlet_url)}`;
   }
   return event;
 }
