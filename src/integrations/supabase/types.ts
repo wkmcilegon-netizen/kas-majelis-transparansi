@@ -38,6 +38,24 @@ export type Database = {
         }
         Relationships: []
       }
+      balance_carry: {
+        Row: {
+          amount: number
+          target: string
+          updated_at: string
+        }
+        Insert: {
+          amount?: number
+          target: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          target?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       events: {
         Row: {
           created_at: string

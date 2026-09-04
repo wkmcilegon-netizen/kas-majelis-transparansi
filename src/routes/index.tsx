@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { BrandHeader } from "@/components/Brand";
 import { Button } from "@/components/ui/button";
 import {
+  fetchCarryBalance,
   fetchLatestEvent,
   formatDate,
   formatRupiah,
@@ -35,8 +36,9 @@ function usePublicData() {
   return useQuery({
     queryKey: ["public-kas"],
     queryFn: async () => {
-      const [event, { data: trx }] = await Promise.all([
+      const [event, carry, { data: trx }] = await Promise.all([
         fetchLatestEvent(supabase),
+        fetchCarryBalance(supabase),
         supabase
           .from("transactions")
           .select("*")
@@ -46,6 +48,7 @@ function usePublicData() {
       ]);
       return {
         event,
+        carry,
         transactions: ((trx ?? []) as Transaction[]).filter((t) => isWithinWindow(t.created_at)),
       };
     },
@@ -58,8 +61,11 @@ function Beranda() {
   const transactions = data?.transactions ?? [];
   const income = transactions.filter((t) => t.kind === "income");
   const expense = transactions.filter((t) => t.kind === "expense");
+  const carry = data?.carry?.acara ?? 0;
   const total =
-    income.reduce((s, t) => s + Number(t.amount), 0) - expense.reduce((s, t) => s + Number(t.amount), 0);
+    carry +
+    income.reduce((s, t) => s + Number(t.amount), 0) -
+    expense.reduce((s, t) => s + Number(t.amount), 0);
   const event = data?.event ?? null;
 
   return (

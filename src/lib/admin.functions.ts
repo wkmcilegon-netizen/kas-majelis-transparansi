@@ -159,5 +159,33 @@ export const purgeUnusedData = createServerFn({ method: "POST" })
     const cutoff = new Date(Date.now() - 182 * 24 * 60 * 60 * 1000).toISOString();
     await supabaseAdmin.from("activity_logs").delete().lt("created_at", cutoff);
 
-    return { ok: true, removedFiles: orphans.length };
+    // Rincian transaksi lebih dari 1 tahun dihapus, tetapi nilainya dipindah
+    // ke saldo warisan agar total kas tidak berubah.
+    const yearAgo = new Date(Date.now() - 365 * 24 * 60 * 60 * 1000).toISOString();
+    const { data: old } = await supabaseAdmin
+      .from("transactions")
+      .select("id, kind, amount, target")
+      .eq("status", "approved")
+      .lt("created_at", yearAgo);
+    if (old?.length) {
+      const net: Record<string, number> = { acara: 0, internal: 0 };
+      for (const t of old) {
+        const delta = (t.kind === "income" ? 1 : -1) * Number(t.amount);
+        net[t.target] = (net[t.target] ?? 0) + delta;
+      }
+      const { data: carries } = await supabaseAdmin.from("balance_carry").select("target, amount");
+      for (const target of Object.keys(net)) {
+        const prev = Number(carries?.find((c) => c.target === target)?.amount ?? 0);
+        await supabaseAdmin
+          .from("balance_carry")
+          .upsert({ target, amount: prev + (net[target] ?? 0), updated_at: new Date().toISOString() });
+      }
+      await supabaseAdmin
+        .from("transactions")
+        .delete()
+        .in("id", old.map((t) => t.id));
+    }
+
+    return { ok: true, removedFiles: orphans.length, archived: old?.length ?? 0 };
   });
+

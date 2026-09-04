@@ -85,3 +85,17 @@ export async function fetchLatestEvent(client: {
   return event;
 }
 
+
+/** Saldo warisan dari transaksi yang rinciannya sudah dihapus (lebih dari 1 tahun). */
+export type CarryBalance = { acara: number; internal: number };
+
+export async function fetchCarryBalance(client: {
+  from: (t: "balance_carry") => any;
+}): Promise<CarryBalance> {
+  const { data } = await client.from("balance_carry").select("target, amount");
+  const rows = (data ?? []) as { target: string; amount: number }[];
+  return {
+    acara: Number(rows.find((r) => r.target === "acara")?.amount ?? 0),
+    internal: Number(rows.find((r) => r.target === "internal")?.amount ?? 0),
+  };
+}
