@@ -18,6 +18,7 @@ import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAdminAnggotaRouteImport } from './routes/_authenticated/admin.anggota'
 import { Route as AuthenticatedAdminPengaturanRouteImport } from './routes/_authenticated/admin.pengaturan'
 import { Route as AuthenticatedAdminPersetujuanRouteImport } from './routes/_authenticated/admin.persetujuan'
+import { Route as ApiPublicPamfletPathRouteImport } from './routes/api/public/pamflet.$path'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -66,6 +67,11 @@ const AuthenticatedAdminPersetujuanRoute =
     path: '/admin/persetujuan',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const ApiPublicPamfletPathRoute = ApiPublicPamfletPathRouteImport.update({
+  id: '/api/public/pamflet/$path',
+  path: '/api/public/pamflet/$path',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -76,6 +82,7 @@ export interface FileRoutesByFullPath {
   '/admin/pengaturan': typeof AuthenticatedAdminPengaturanRoute
   '/admin/persetujuan': typeof AuthenticatedAdminPersetujuanRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
+  '/api/public/pamflet/$path': typeof ApiPublicPamfletPathRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -86,6 +93,7 @@ export interface FileRoutesByTo {
   '/admin/pengaturan': typeof AuthenticatedAdminPengaturanRoute
   '/admin/persetujuan': typeof AuthenticatedAdminPersetujuanRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
+  '/api/public/pamflet/$path': typeof ApiPublicPamfletPathRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -98,6 +106,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/pengaturan': typeof AuthenticatedAdminPengaturanRoute
   '/_authenticated/admin/persetujuan': typeof AuthenticatedAdminPersetujuanRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
+  '/api/public/pamflet/$path': typeof ApiPublicPamfletPathRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -110,6 +119,7 @@ export interface FileRouteTypes {
     | '/admin/pengaturan'
     | '/admin/persetujuan'
     | '/admin/'
+    | '/api/public/pamflet/$path'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -120,6 +130,7 @@ export interface FileRouteTypes {
     | '/admin/pengaturan'
     | '/admin/persetujuan'
     | '/admin'
+    | '/api/public/pamflet/$path'
   id:
     | '__root__'
     | '/'
@@ -131,6 +142,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/pengaturan'
     | '/_authenticated/admin/persetujuan'
     | '/_authenticated/admin/'
+    | '/api/public/pamflet/$path'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -138,6 +150,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AcaraRoute: typeof AcaraRoute
   AuthRoute: typeof AuthRoute
+  ApiPublicPamfletPathRoute: typeof ApiPublicPamfletPathRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -205,6 +218,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminPersetujuanRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/pamflet/$path': {
+      id: '/api/public/pamflet/$path'
+      path: '/api/public/pamflet/$path'
+      fullPath: '/api/public/pamflet/$path'
+      preLoaderRoute: typeof ApiPublicPamfletPathRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -232,6 +252,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AcaraRoute: AcaraRoute,
   AuthRoute: AuthRoute,
+  ApiPublicPamfletPathRoute: ApiPublicPamfletPathRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
