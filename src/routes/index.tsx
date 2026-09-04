@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { BrandHeader } from "@/components/Brand";
 import { Button } from "@/components/ui/button";
 import {
+  fetchCarryBalance,
   fetchLatestEvent,
   formatDate,
   formatRupiah,
