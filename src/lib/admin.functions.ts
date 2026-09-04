@@ -178,7 +178,7 @@ export const purgeUnusedData = createServerFn({ method: "POST" })
         const prev = Number(carries?.find((c) => c.target === target)?.amount ?? 0);
         await supabaseAdmin
           .from("balance_carry")
-          .upsert({ target, amount: prev + net[target], updated_at: new Date().toISOString() });
+          .upsert({ target, amount: prev + (net[target] ?? 0), updated_at: new Date().toISOString() });
       }
       await supabaseAdmin
         .from("transactions")
