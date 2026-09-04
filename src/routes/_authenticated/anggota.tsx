@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/PasswordInput";
 import { Label } from "@/components/ui/label";
-import { formatDate, formatRupiah, isWithinWindow, type Transaction } from "@/lib/kas";
+import { fetchCarryBalance, formatDate, formatRupiah, isWithinWindow, type Transaction } from "@/lib/kas";
 import type { ActivityLog } from "@/lib/activity";
 
 export const Route = createFileRoute("/_authenticated/anggota")({
@@ -50,6 +50,11 @@ function HalamanAnggota() {
   const sum = (list: Transaction[], kind: Transaction["kind"]) =>
     list.filter((t) => t.kind === kind).reduce((s, t) => s + Number(t.amount), 0);
 
+  const { data: carry } = useQuery({
+    queryKey: ["carry-balance"],
+    queryFn: () => fetchCarryBalance(supabase),
+  });
+
   async function signOut() {
     await qc.cancelQueries();
     qc.clear();
@@ -72,13 +77,13 @@ function HalamanAnggota() {
           <div className="rounded-2xl bg-gradient-navy px-4 py-4 text-primary-foreground shadow-soft">
             <p className="text-[0.65rem] uppercase tracking-widest text-gold-soft">Kas Acara</p>
             <p className="mt-1 text-xl font-bold">
-              {formatRupiah(sum(acara, "income") - sum(acara, "expense"))}
+              {formatRupiah((carry?.acara ?? 0) + sum(acara, "income") - sum(acara, "expense"))}
             </p>
           </div>
           <div className="rounded-2xl bg-gradient-navy px-4 py-4 text-primary-foreground shadow-soft">
             <p className="text-[0.65rem] uppercase tracking-widest text-gold-soft">Kas Internal</p>
             <p className="mt-1 text-xl font-bold">
-              {formatRupiah(sum(internal, "income") - sum(internal, "expense"))}
+              {formatRupiah((carry?.internal ?? 0) + sum(internal, "income") - sum(internal, "expense"))}
             </p>
           </div>
         </div>

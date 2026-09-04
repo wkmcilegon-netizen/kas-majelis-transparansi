@@ -63,6 +63,11 @@ function AdminHome() {
     },
   });
 
+  const { data: carry } = useQuery({
+    queryKey: ["carry-balance"],
+    queryFn: () => fetchCarryBalance(supabase),
+  });
+
   const approved = (trx ?? []).filter((t) => t.status === "approved");
   const acara = approved.filter((t) => t.target === "acara" && isWithinWindow(t.created_at));
   const internal = approved.filter((t) => t.target === "internal");
@@ -70,8 +75,8 @@ function AdminHome() {
 
   const sum = (list: Transaction[], kind: Transaction["kind"]) =>
     list.filter((t) => t.kind === kind).reduce((s, t) => s + Number(t.amount), 0);
-  const totalAcara = sum(acara, "income") - sum(acara, "expense");
-  const totalInternal = sum(internal, "income") - sum(internal, "expense");
+  const totalAcara = (carry?.acara ?? 0) + sum(acara, "income") - sum(acara, "expense");
+  const totalInternal = (carry?.internal ?? 0) + sum(internal, "income") - sum(internal, "expense");
 
   async function signOut() {
     await qc.cancelQueries();
