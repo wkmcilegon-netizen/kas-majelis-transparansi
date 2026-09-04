@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { purgeUnusedData } from "@/lib/admin.functions";
 import { logActivity } from "@/lib/activity";
-import { formatRupiah, isWithinWindow, type EventInfo, type Transaction } from "@/lib/kas";
+import { fetchCarryBalance, formatRupiah, isWithinWindow, type EventInfo, type Transaction } from "@/lib/kas";
 
 export const Route = createFileRoute("/_authenticated/admin/")({
   head: () => ({
