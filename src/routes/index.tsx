@@ -12,7 +12,7 @@ import {
   isWithinWindow,
   type Transaction,
 } from "@/lib/kas";
-import { handleImageError, resolveMediaUrl } from "@/lib/media";
+import { getImageUrl, handleImageError } from "@/lib/media";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -79,7 +79,7 @@ function Beranda() {
             <Link to="/acara" className="flex gap-3 text-left transition hover:opacity-90">
               {event.pamphlet_url ? (
                 <img
-                  src={resolveMediaUrl(event.pamphlet_url)}
+                  src={getImageUrl(event.pamphlet_url)}
                   onError={handleImageError}
                   alt={`Pamflet acara ${event.title}`}
                   className="h-28 w-24 shrink-0 rounded-lg border border-gold-soft object-cover"
