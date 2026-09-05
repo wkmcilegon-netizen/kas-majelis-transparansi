@@ -85,6 +85,18 @@ export async function fetchLatestEvent(client: {
 /** Saldo warisan dari transaksi yang rinciannya sudah dihapus (lebih dari 1 tahun). */
 export type CarryBalance = { acara: number; internal: number };
 
+/** Saldo warisan kas acara untuk halaman publik (tanpa login). */
+export async function fetchPublicCarryBalance(): Promise<CarryBalance> {
+  try {
+    const res = await fetch("/api/public/kas/carry");
+    if (!res.ok) throw new Error("gagal");
+    const json = (await res.json()) as { acara?: number };
+    return { acara: Number(json.acara ?? 0), internal: 0 };
+  } catch {
+    return { acara: 0, internal: 0 };
+  }
+}
+
 export async function fetchCarryBalance(client: {
   from: (t: "balance_carry") => any;
 }): Promise<CarryBalance> {
