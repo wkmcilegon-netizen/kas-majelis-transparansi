@@ -1,12 +1,13 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
-import logo from "@/assets/logo-mtjsi.asset.json";
 import { Button } from "@/components/ui/button";
+import { handleImageError } from "@/lib/media";
 
 export function Logo({ size = 56 }: { size?: number }) {
   return (
     <img
-      src={logo.url}
+      src="/logo-mtjsi.jpg"
+      onError={handleImageError}
       alt="Logo Majelis Ta'lim & Dzikir Jam'iyyah Simthuddurar Al-Istiqomah"
       width={size}
       height={size}
