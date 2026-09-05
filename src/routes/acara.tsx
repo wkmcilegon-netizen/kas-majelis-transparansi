@@ -4,7 +4,7 @@ import { CalendarDays } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { BackButton, BrandHeader } from "@/components/Brand";
 import { fetchLatestEvent, formatDate } from "@/lib/kas";
-import { handleImageError, resolveMediaUrl } from "@/lib/media";
+import { getImageUrl, handleImageError } from "@/lib/media";
 
 export const Route = createFileRoute("/acara")({
   head: () => ({
@@ -49,7 +49,7 @@ function AcaraPage() {
           <article className="overflow-hidden rounded-2xl border border-border bg-card shadow-soft">
             {data.pamphlet_url ? (
               <img
-                src={resolveMediaUrl(data.pamphlet_url)}
+                src={getImageUrl(data.pamphlet_url)}
                 onError={handleImageError}
                 alt={`Pamflet acara ${data.title}`}
                 className="w-full object-contain"
