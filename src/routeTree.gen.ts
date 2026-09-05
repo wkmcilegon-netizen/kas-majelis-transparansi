@@ -18,6 +18,8 @@ import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAdminAnggotaRouteImport } from './routes/_authenticated/admin.anggota'
 import { Route as AuthenticatedAdminPengaturanRouteImport } from './routes/_authenticated/admin.pengaturan'
 import { Route as AuthenticatedAdminPersetujuanRouteImport } from './routes/_authenticated/admin.persetujuan'
+import { Route as ApiPublicCronCleanupRouteImport } from './routes/api/public/cron/cleanup'
+import { Route as ApiPublicKasCarryRouteImport } from './routes/api/public/kas.carry'
 import { Route as ApiPublicPamfletPathRouteImport } from './routes/api/public/pamflet.$path'
 
 const IndexRoute = IndexRouteImport.update({
@@ -67,6 +69,16 @@ const AuthenticatedAdminPersetujuanRoute =
     path: '/admin/persetujuan',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const ApiPublicCronCleanupRoute = ApiPublicCronCleanupRouteImport.update({
+  id: '/api/public/cron/cleanup',
+  path: '/api/public/cron/cleanup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicKasCarryRoute = ApiPublicKasCarryRouteImport.update({
+  id: '/api/public/kas/carry',
+  path: '/api/public/kas/carry',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicPamfletPathRoute = ApiPublicPamfletPathRouteImport.update({
   id: '/api/public/pamflet/$path',
   path: '/api/public/pamflet/$path',
@@ -82,6 +94,8 @@ export interface FileRoutesByFullPath {
   '/admin/pengaturan': typeof AuthenticatedAdminPengaturanRoute
   '/admin/persetujuan': typeof AuthenticatedAdminPersetujuanRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
+  '/api/public/cron/cleanup': typeof ApiPublicCronCleanupRoute
+  '/api/public/kas/carry': typeof ApiPublicKasCarryRoute
   '/api/public/pamflet/$path': typeof ApiPublicPamfletPathRoute
 }
 export interface FileRoutesByTo {
@@ -93,6 +107,8 @@ export interface FileRoutesByTo {
   '/admin/pengaturan': typeof AuthenticatedAdminPengaturanRoute
   '/admin/persetujuan': typeof AuthenticatedAdminPersetujuanRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
+  '/api/public/cron/cleanup': typeof ApiPublicCronCleanupRoute
+  '/api/public/kas/carry': typeof ApiPublicKasCarryRoute
   '/api/public/pamflet/$path': typeof ApiPublicPamfletPathRoute
 }
 export interface FileRoutesById {
@@ -106,6 +122,8 @@ export interface FileRoutesById {
   '/_authenticated/admin/pengaturan': typeof AuthenticatedAdminPengaturanRoute
   '/_authenticated/admin/persetujuan': typeof AuthenticatedAdminPersetujuanRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
+  '/api/public/cron/cleanup': typeof ApiPublicCronCleanupRoute
+  '/api/public/kas/carry': typeof ApiPublicKasCarryRoute
   '/api/public/pamflet/$path': typeof ApiPublicPamfletPathRoute
 }
 export interface FileRouteTypes {
@@ -119,6 +137,8 @@ export interface FileRouteTypes {
     | '/admin/pengaturan'
     | '/admin/persetujuan'
     | '/admin/'
+    | '/api/public/cron/cleanup'
+    | '/api/public/kas/carry'
     | '/api/public/pamflet/$path'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -130,6 +150,8 @@ export interface FileRouteTypes {
     | '/admin/pengaturan'
     | '/admin/persetujuan'
     | '/admin'
+    | '/api/public/cron/cleanup'
+    | '/api/public/kas/carry'
     | '/api/public/pamflet/$path'
   id:
     | '__root__'
@@ -142,6 +164,8 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/pengaturan'
     | '/_authenticated/admin/persetujuan'
     | '/_authenticated/admin/'
+    | '/api/public/cron/cleanup'
+    | '/api/public/kas/carry'
     | '/api/public/pamflet/$path'
   fileRoutesById: FileRoutesById
 }
@@ -150,6 +174,8 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AcaraRoute: typeof AcaraRoute
   AuthRoute: typeof AuthRoute
+  ApiPublicCronCleanupRoute: typeof ApiPublicCronCleanupRoute
+  ApiPublicKasCarryRoute: typeof ApiPublicKasCarryRoute
   ApiPublicPamfletPathRoute: typeof ApiPublicPamfletPathRoute
 }
 
@@ -218,6 +244,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminPersetujuanRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/cron/cleanup': {
+      id: '/api/public/cron/cleanup'
+      path: '/api/public/cron/cleanup'
+      fullPath: '/api/public/cron/cleanup'
+      preLoaderRoute: typeof ApiPublicCronCleanupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/kas/carry': {
+      id: '/api/public/kas/carry'
+      path: '/api/public/kas/carry'
+      fullPath: '/api/public/kas/carry'
+      preLoaderRoute: typeof ApiPublicKasCarryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/pamflet/$path': {
       id: '/api/public/pamflet/$path'
       path: '/api/public/pamflet/$path'
@@ -252,6 +292,8 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AcaraRoute: AcaraRoute,
   AuthRoute: AuthRoute,
+  ApiPublicCronCleanupRoute: ApiPublicCronCleanupRoute,
+  ApiPublicKasCarryRoute: ApiPublicKasCarryRoute,
   ApiPublicPamfletPathRoute: ApiPublicPamfletPathRoute,
 }
 export const routeTree = rootRouteImport
